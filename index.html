@@ -3,10 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="5wxZgmU_ftInkHbLUNR3AoeY4jrMDVKzdlXwmG6xxHM" />
     <link rel="icon" type="image/png" href="logo-network.png">
-    <title>NexusCode | Panel Militar</title>
-
+    <title>NexusCode | Panel Operativo</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
@@ -14,126 +12,138 @@
             --verde-militar: #4B5320;
             --verde-oscuro: #3d431a;
             --fondo-gris: #f0f2f0;
-            --blanco: #ffffff;
             --sidebar-width: 260px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: var(--fondo-gris); overflow: hidden; height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo-gris); overflow: hidden; height: 100vh; }
 
         /* --- LOGIN --- */
         #bloque-login {
             display: flex; justify-content: center; align-items: center; height: 100vh;
-            background: linear-gradient(135deg, #4B5320 0%, #2a2e12 100%);
+            background: var(--verde-militar);
         }
         .login-card {
             background: white; padding: 40px; border-radius: 20px; text-align: center;
             box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 350px;
         }
-        .login-card h1 { color: var(--verde-militar); margin-bottom: 20px; }
-        .login-card input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        .login-card input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .login-card button { width: 100%; padding: 12px; background: var(--verde-militar); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* --- INTERFAZ PRINCIPAL --- */
+        /* --- ESTRUCTURA APP --- */
         #contenido-real { display: none; flex-direction: column; height: 100vh; }
 
-        /* Top Bar */
         .topbar {
-            background: var(--verde-militar); color: white; height: 60px;
+            background: var(--verde-militar); color: white; height: 50px;
             display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-            z-index: 1000;
         }
-        .menu-btn { font-size: 24px; cursor: pointer; display: flex; align-items: center; gap: 10px; }
-        .cerrar-btn { cursor: pointer; font-size: 0.9em; background: rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 5px; }
 
-        /* Sidebar */
+        .main-wrapper { display: flex; flex: 1; position: relative; }
+
+        /* SIDEBAR */
         .sidebar {
-            position: fixed; left: -260px; top: 60px; width: var(--sidebar-width); height: calc(100vh - 60px);
-            background: var(--verde-militar); color: white; transition: 0.3s; padding: 20px; z-index: 999;
+            width: var(--sidebar-width); background: var(--verde-militar); color: white;
+            position: absolute; left: -260px; top: 0; height: 100%; transition: 0.3s; padding: 20px; z-index: 100;
         }
         .sidebar.active { left: 0; }
-        .sidebar ul { list-style: none; margin-top: 20px; }
-        .sidebar li { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; transition: 0.2s; }
+        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-size: 0.9em;}
         .sidebar li:hover { background: var(--verde-oscuro); }
 
-        /* Main Content */
-        .main-wrapper { display: flex; flex: 1; transition: 0.3s; margin-top: 0; }
-        .main-wrapper.shifted { margin-left: var(--sidebar-width); }
+        /* AREA DE TRABAJO */
+        .work-area { flex: 1; display: flex; flex-direction: column; transition: 0.3s; }
+        .work-area.shifted { margin-left: var(--sidebar-width); }
 
-        .content-area { flex: 1; display: flex; flex-direction: column; }
-
-        /* Tabs */
-        .tabs { background: var(--verde-militar); display: flex; padding-left: 20px; gap: 5px; }
-        .tab { 
-            background: var(--verde-oscuro); color: rgba(255,255,255,0.5); 
-            padding: 10px 25px; border-radius: 10px 10px 0 0; cursor: pointer; font-size: 0.8em;
+        /* TABS ESTILO NAVEGADOR */
+        .tabs-bar {
+            background: var(--verde-militar); display: flex; align-items: flex-end;
+            padding: 5px 10px 0 10px; gap: 4px; overflow-x: auto;
         }
-        .tab.active { background: var(--fondo-gris); color: var(--verde-militar); font-weight: bold; }
-
-        /* Viewport */
-        .viewport { 
-            flex: 1; background: var(--blanco); margin: 15px; border-radius: 10px; 
-            box-shadow: inset 0 0 10px rgba(0,0,0,0.05); padding: 40px; text-align: center;
+        .tab {
+            background: var(--verde-oscuro); color: white; padding: 8px 15px;
+            border-radius: 8px 8px 0 0; font-size: 12px; display: flex; align-items: center;
+            gap: 10px; min-width: 120px; cursor: pointer; border: none; opacity: 0.7;
+        }
+        .tab.active { background: white; color: var(--verde-militar); opacity: 1; font-weight: bold; }
+        .tab .close-tab { font-size: 14px; opacity: 0.5; transition: 0.3s; }
+        .tab .close-tab:hover { opacity: 1; color: red; }
+        
+        .add-tab-btn {
+            background: none; border: none; color: white; font-size: 20px;
+            padding: 5px 10px; cursor: pointer; margin-bottom: 5px;
         }
 
-        .footer-badge { position: fixed; bottom: 15px; left: 15px; display: flex; align-items: center; gap: 5px; font-size: 10px; color: #888; }
+        /* VIEWPORT (CONTENIDO) */
+        .viewport {
+            flex: 1; background: white; margin: 15px; border-radius: 12px;
+            padding: 40px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+        }
+
+        /* ESTILO CONSOLA */
+        .console-box {
+            background: #1e1e1e; color: #00ff00; padding: 20px; border-radius: 8px;
+            font-family: 'Courier New', monospace; text-align: left; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
 
     <div id="bloque-login">
         <div class="login-card">
-            <img src="logo-network.png" alt="Logo" style="width: 60px; margin-bottom: 10px;">
-            <h1>NexusCode</h1>
-            <input type="password" id="input-pass" placeholder="Contraseña Militar">
-            <button onclick="comprobar()">ACCEDER</button>
-            <p id="error-msg" style="color:red; display:none; margin-top:10px; font-size:0.8em;">Acceso denegado</p>
+            <img src="logo-network.png" style="width: 50px;">
+            <h2 style="margin: 10px 0; color: #4B5320;">NexusCode</h2>
+            <input type="password" id="input-pass" placeholder="Contraseña">
+            <button onclick="comprobar()">ENTRAR</button>
+            <p id="error-msg" style="color:red; display:none; font-size:12px; margin-top:10px;">Acceso Incorrecto</p>
         </div>
     </div>
 
     <div id="contenido-real">
         <header class="topbar">
-            <div class="menu-btn" onclick="toggleSidebar()">
-                <i class="ri-menu-line"></i>
-                <span style="font-size: 18px; font-weight: bold;">NEXUSCODE</span>
+            <div style="display:flex; align-items:center; gap:15px;">
+                <i class="ri-menu-line" style="cursor:pointer; font-size:20px;" onclick="toggleSidebar()"></i>
+                <span style="font-weight:bold; letter-spacing:1px;">NEXUSCODE v1.0</span>
             </div>
-            <div class="cerrar-btn" onclick="location.reload()">Cerrar sesión</div>
+            <i class="ri-logout-box-r-line" style="cursor:pointer" onclick="location.reload()"></i>
         </header>
 
-        <div class="main-wrapper" id="wrapper">
+        <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
-                <p style="font-size: 0.7em; opacity: 0.6; letter-spacing: 1px;">CONFIGURACIÓN</p>
+                <p style="font-size:10px; opacity:0.6; margin-bottom:15px;">MÓDULOS DE SISTEMA</p>
                 <ul>
-                    <li><i class="ri-shield-user-line"></i> Perfil de Usuario</li>
-                    <li><i class="ri-database-2-line"></i> Bases de Datos</li>
-                    <li><i class="ri-terminal-box-line"></i> Consola Root</li>
-                    <li><i class="ri-settings-4-line"></i> Ajustes Sistema</li>
+                    <li><i class="ri-terminal-box-line"></i> Terminal Root</li>
+                    <li><i class="ri-shield-flash-line"></i> Firewall Status</li>
+                    <li><i class="ri-folder-open-line"></i> Archivos Secretos</li>
+                    <li><i class="ri-settings-5-line"></i> Preferencias</li>
                 </ul>
             </aside>
 
-            <main class="content-area">
-                <div class="tabs">
-                    <div class="tab active">Página-1</div>
-                    <div class="tab">Página-2</div>
+            <main class="work-area" id="work-area">
+                <div class="tabs-bar" id="tabs-bar">
+                    <div class="tab active" onclick="selectTab(this)">
+                        <span>Pestaña 1</span>
+                        <i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>
+                    </div>
+                    <button class="add-tab-btn" onclick="addTab()">+</button>
                 </div>
-                <div class="viewport">
-                    <h2 style="color: #444;">aqui lo demás</h2>
-                    <p style="margin-top: 20px; color: #888;">Bienvenido al centro de mando. Selecciona una opción del menú lateral para comenzar.</p>
+
+                <div class="viewport" id="viewport">
+                    <h2 style="color:var(--verde-militar)">Dashboard Operativo</h2>
+                    <p style="color:#666">Bienvenido al núcleo de NexusCode. Sistema listo para comandos.</p>
+                    
+                    <div class="console-box">
+                        > Iniciando sesión segura...<br>
+                        > Encriptación SSL Activada...<br>
+                        > Entorno Windows 11 detectado.<br>
+                        > Esperando entrada de usuario_
+                    </div>
                 </div>
             </main>
-        </div>
-
-        <div class="footer-badge">
-            <img src="logo-network.png" style="width: 15px; filter: grayscale(1);">
-            <span>SECURE SESSION • WINDOWS 11 ENVIRONMENT</span>
         </div>
     </div>
 
     <script>
         function comprobar() {
-            var claveSecreta = "github_546312!"; 
-            var ingresada = document.getElementById("input-pass").value;
-            if (ingresada === claveSecreta) {
+            if (document.getElementById("input-pass").value === "github_546312!") {
                 document.getElementById("bloque-login").style.display = "none";
                 document.getElementById("contenido-real").style.display = "flex";
             } else {
@@ -143,12 +153,40 @@
 
         function toggleSidebar() {
             document.getElementById('sidebar').classList.toggle('active');
-            document.getElementById('wrapper').classList.toggle('shifted');
+            document.getElementById('work-area').classList.toggle('shifted');
         }
 
-        document.getElementById("input-pass").addEventListener("keypress", function(e) {
-            if (e.key === "Enter") comprobar();
-        });
+        // FUNCIONALIDAD DE PESTAÑAS
+        let tabCount = 1;
+
+        function addTab() {
+            tabCount++;
+            const tabsBar = document.getElementById('tabs-bar');
+            const addBtn = tabsBar.querySelector('.add-tab-btn');
+            
+            const newTab = document.createElement('div');
+            newTab.className = 'tab';
+            newTab.onclick = function() { selectTab(this); };
+            newTab.innerHTML = `<span>Nueva Pág ${tabCount}</span><i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>`;
+            
+            tabsBar.insertBefore(newTab, addBtn);
+            selectTab(newTab);
+        }
+
+        function selectTab(el) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            // Aquí podrías cambiar el contenido del viewport según la pestaña
+        }
+
+        function closeTab(event, el) {
+            event.stopPropagation(); // Evita que se dispare el onclick de la pestaña
+            const tab = el.parentElement;
+            if (document.querySelectorAll('.tab').length > 1) {
+                tab.remove();
+                selectTab(document.querySelector('.tab')); // Selecciona la primera disponible
+            }
+        }
     </script>
 </body>
 </html>
