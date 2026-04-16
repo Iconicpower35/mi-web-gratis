@@ -11,14 +11,20 @@
         :root {
             --verde-militar: #4B5320;
             --verde-oscuro: #3d431a;
-            --blanco: #ffffff;
             --sidebar-width: 260px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f0; overflow: hidden; height: 100vh; }
 
-        /* --- PANTALLAS DE ESTADO (OCULTAS POR DEFECTO) --- */
+        /* --- ANIMACIONES --- */
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        .fade-out { opacity: 0; transition: opacity 0.8s ease; }
+        .fade-in { animation: fadeIn 0.8s forwards; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- PANTALLAS --- */
         .full-screen-state {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--verde-militar); color: white;
@@ -26,15 +32,12 @@
             z-index: 9999; text-align: center;
         }
 
-        /* Animación Barra de Carga */
-        .loader-bar { width: 300px; height: 15px; border: 2px solid white; border-radius: 10px; margin-top: 20px; overflow: hidden; }
-        .progress { width: 0%; height: 100%; background: white; transition: width 2s linear; }
+        .spinner { font-size: 60px; animation: spin 2s linear infinite; margin-bottom: 20px; }
 
-        /* Icono de Usuario Bienvenida */
-        .user-icon-circle {
-            width: 150px; height: 150px; border: 4px solid white; border-radius: 50%;
-            display: flex; justify-content: center; align-items: center; font-size: 80px; margin-bottom: 20px;
-        }
+        .loader-bar { width: 300px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: white; transition: width 3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+        .user-icon-circle { width: 150px; height: 150px; border: 4px solid white; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 80px; margin-bottom: 20px; }
 
         /* --- LOGIN --- */
         #bloque-login { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--verde-militar); }
@@ -42,88 +45,73 @@
         .login-card input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .login-card button { width: 100%; padding: 12px; background: var(--verde-militar); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* --- ESTRUCTURA APP --- */
+        /* --- APP PRINCIPAL --- */
         #contenido-real { display: none; flex-direction: column; height: 100vh; }
         .topbar { background: var(--verde-militar); color: white; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
         .main-wrapper { display: flex; flex: 1; position: relative; }
-
-        /* SIDEBAR */
         .sidebar { width: var(--sidebar-width); background: var(--verde-militar); color: white; position: absolute; left: -260px; top: 0; height: 100%; transition: 0.3s; padding: 20px; z-index: 100; }
         .sidebar.active { left: 0; }
-        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.9em; transition: 0.2s;}
-        .sidebar li:hover { background: var(--verde-oscuro); }
-
-        /* AREA DE TRABAJO */
         .work-area { flex: 1; display: flex; flex-direction: column; transition: 0.3s; }
         .work-area.shifted { margin-left: var(--sidebar-width); }
-
-        /* TABS ESTILO CHROME */
         .tabs-bar { background: var(--verde-militar); display: flex; align-items: flex-end; padding: 5px 10px 0 10px; gap: 4px; }
-        .tab { background: var(--verde-oscuro); color: white; padding: 8px 15px; border-radius: 8px 8px 0 0; font-size: 12px; display: flex; align-items: center; gap: 10px; min-width: 120px; cursor: pointer; border: none; opacity: 0.7; }
-        .tab.active { background: white; color: var(--verde-militar); opacity: 1; font-weight: bold; }
-        .close-tab:hover { color: red; }
-
-        /* VIEWPORT */
-        .viewport { flex: 1; background: white; margin: 15px; border-radius: 12px; padding: 40px; box-shadow: inset 0 0 15px rgba(0,0,0,0.05); text-align: center; }
+        .tab { background: var(--verde-oscuro); color: white; padding: 8px 15px; border-radius: 8px 8px 0 0; font-size: 11px; display: flex; align-items: center; gap: 10px; min-width: 130px; cursor: pointer; opacity: 0.7; transition: 0.3s; }
+        .tab.active { background: white; color: var(--verde-militar); opacity: 1; }
+        .viewport { flex: 1; background: white; margin: 15px; border-radius: 12px; padding: 40px; text-align: center; box-shadow: inset 0 0 10px rgba(0,0,0,0.05); }
     </style>
 </head>
 <body>
 
     <div id="bloque-login">
         <div class="login-card">
-            <img src="logo-network.png" style="width: 50px;">
-            <h2 style="margin: 10px 0; color: var(--verde-militar);">NexusCode</h2>
+            <img src="logo-network.png" style="width: 50px; margin-bottom: 10px;">
+            <h2 style="color: var(--verde-militar);">NexusCode</h2>
             <input type="password" id="input-pass" placeholder="Contraseña">
             <button onclick="iniciarCarga()">ENTRAR</button>
         </div>
     </div>
 
     <div id="pantalla-carga" class="full-screen-state">
-        <div style="font-size: 50px; margin-bottom: 20px;">↻</div>
+        <div class="spinner"><i class="ri-loader-4-line"></i></div>
+        <h2 style="letter-spacing: 3px; font-weight: 300;">CARGANDO CONTENIDO</h2>
         <div class="loader-bar"><div class="progress" id="barra-progreso"></div></div>
-        <h2 style="margin-top: 20px; letter-spacing: 2px;">CARGANDO CONTENIDO</h2>
     </div>
 
     <div id="pantalla-bienvenida" class="full-screen-state">
-        <div class="user-icon-circle"><i class="ri-user-line"></i></div>
-        <h1>USUARIO_01</h1>
-        <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+        <div class="user-icon-circle fade-in"><i class="ri-user-line"></i></div>
+        <h1 class="fade-in">USUARIO_01</h1>
+        <div class="fade-in" style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
             <i class="ri-lock-unlock-line"></i>
             <h2 style="font-weight: 300;">BIENVENIDO DE NUEVO</h2>
         </div>
-        <p style="position: absolute; bottom: 20px; left: 20px; font-size: 12px; opacity: 0.7;">✔ Conexión protegida</p>
     </div>
 
     <div id="contenido-real">
         <header class="topbar">
             <div style="display:flex; align-items:center; gap:15px;">
-                <i class="ri-menu-line" style="cursor:pointer; font-size:20px;" onclick="toggleSidebar()"></i>
-                <span style="font-weight:bold;">NEXUSCODE</span>
+                <i class="ri-menu-line" style="cursor:pointer;" onclick="toggleSidebar()"></i>
+                <span style="font-weight:bold; font-size: 14px;">NEXUSCODE OPERATIVE SYSTEM</span>
             </div>
             <i class="ri-logout-box-r-line" style="cursor:pointer" onclick="location.reload()"></i>
         </header>
-
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
-                <p style="font-size:10px; opacity:0.6; margin-bottom:15px;">SISTEMA</p>
-                <ul>
-                    <li><i class="ri-shield-flash-line"></i> Estado Firewall</li>
-                    <li><i class="ri-database-2-line"></i> Datos</li>
-                    <li><i class="ri-settings-5-line"></i> Ajustes</li>
+                <p style="font-size:10px; opacity:0.5; margin-bottom:15px; letter-spacing: 1px;">SISTEMA</p>
+                <ul style="list-style: none;">
+                    <li style="padding: 10px; cursor: pointer;"><i class="ri-dashboard-line"></i> Dashboard</li>
+                    <li style="padding: 10px; cursor: pointer;"><i class="ri-shield-user-line"></i> Seguridad</li>
                 </ul>
             </aside>
-
             <main class="work-area" id="work-area">
                 <div class="tabs-bar" id="tabs-bar">
                     <div class="tab active" onclick="selectTab(this)">
-                        <span>Pestaña 1</span>
-                        <i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>
+                        <span>Pestaña Principal</span>
+                        <i class="ri-close-line" onclick="closeTab(event, this)"></i>
                     </div>
-                    <button style="background:none; border:none; color:white; font-size:20px; padding: 5px 10px; cursor:pointer;" onclick="addTab()">+</button>
+                    <button style="background:none; border:none; color:white; cursor:pointer; padding: 5px 10px;" onclick="addTab()">+</button>
                 </div>
-                <div class="viewport" id="viewport">
-                    <h2 style="color:var(--verde-militar)">Dashboard Operativo</h2>
-                    <p style="color:#666; margin-top:10px;">Sistema cargado correctamente. Gestiona tus pestañas arriba.</p>
+                <div class="viewport">
+                    <h2 style="color:var(--verde-militar)">Panel Central</h2>
+                    <p style="color:#888; margin-top:15px;">Todos los sistemas operativos. Bienvenido a NexusCode.</p>
                 </div>
             </main>
         </div>
@@ -132,28 +120,30 @@
     <script>
         function iniciarCarga() {
             if (document.getElementById("input-pass").value === "github_546312!") {
-                // 1. Ocultar Login y mostrar Carga
                 document.getElementById("bloque-login").style.display = "none";
-                document.getElementById("pantalla-carga").style.display = "flex";
+                const carga = document.getElementById("pantalla-carga");
+                carga.style.display = "flex";
                 
-                // 2. Animar barra de progreso
-                setTimeout(() => {
-                    document.getElementById("barra-progreso").style.width = "100%";
-                }, 100);
+                setTimeout(() => { document.getElementById("barra-progreso").style.width = "100%"; }, 100);
 
-                // 3. Pasar a Bienvenida tras 2.5 segundos
+                // Transición a Bienvenida
                 setTimeout(() => {
-                    document.getElementById("pantalla-carga").style.display = "none";
-                    document.getElementById("pantalla-bienvenida").style.display = "flex";
-                }, 2600);
-
-                // 4. Entrar a la App tras 2 segundos más
-                setTimeout(() => {
-                    document.getElementById("pantalla-bienvenida").style.display = "none";
-                    document.getElementById("contenido-real").style.display = "flex";
-                }, 4600);
-            } else {
-                alert("Contraseña incorrecta");
+                    carga.classList.add('fade-out');
+                    setTimeout(() => {
+                        carga.style.display = "none";
+                        const bienvenido = document.getElementById("pantalla-bienvenida");
+                        bienvenido.style.display = "flex";
+                        
+                        // Transición a App (Dura más tiempo como pediste)
+                        setTimeout(() => {
+                            bienvenido.classList.add('fade-out');
+                            setTimeout(() => {
+                                bienvenido.style.display = "none";
+                                document.getElementById("contenido-real").style.display = "flex";
+                            }, 800);
+                        }, 4000); // 4 segundos de bienvenida
+                    }, 800);
+                }, 3500); // Tiempo de carga
             }
         }
 
@@ -162,14 +152,13 @@
             document.getElementById('work-area').classList.toggle('shifted');
         }
 
-        // Sistema simple de pestañas
         function addTab() {
             const tabsBar = document.getElementById('tabs-bar');
             const btn = tabsBar.querySelector('button');
             const newTab = document.createElement('div');
             newTab.className = 'tab';
             newTab.onclick = function() { selectTab(this); };
-            newTab.innerHTML = `<span>Nueva Pág</span><i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>`;
+            newTab.innerHTML = `<span>Nueva Pág</span><i class="ri-close-line" onclick="closeTab(event, this)"></i>`;
             tabsBar.insertBefore(newTab, btn);
             selectTab(newTab);
         }
