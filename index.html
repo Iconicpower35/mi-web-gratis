@@ -4,85 +4,67 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="logo-network.png">
-    <title>NexusCode | Panel Operativo</title>
+    <title>NexusCode | Sistema Operativo</title>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     
     <style>
         :root {
             --verde-militar: #4B5320;
             --verde-oscuro: #3d431a;
-            --fondo-gris: #f0f2f0;
+            --blanco: #ffffff;
             --sidebar-width: 260px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--fondo-gris); overflow: hidden; height: 100vh; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f0; overflow: hidden; height: 100vh; }
+
+        /* --- PANTALLAS DE ESTADO (OCULTAS POR DEFECTO) --- */
+        .full-screen-state {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--verde-militar); color: white;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; text-align: center;
+        }
+
+        /* Animación Barra de Carga */
+        .loader-bar { width: 300px; height: 15px; border: 2px solid white; border-radius: 10px; margin-top: 20px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: white; transition: width 2s linear; }
+
+        /* Icono de Usuario Bienvenida */
+        .user-icon-circle {
+            width: 150px; height: 150px; border: 4px solid white; border-radius: 50%;
+            display: flex; justify-content: center; align-items: center; font-size: 80px; margin-bottom: 20px;
+        }
 
         /* --- LOGIN --- */
-        #bloque-login {
-            display: flex; justify-content: center; align-items: center; height: 100vh;
-            background: var(--verde-militar);
-        }
-        .login-card {
-            background: white; padding: 40px; border-radius: 20px; text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 350px;
-        }
+        #bloque-login { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--verde-militar); }
+        .login-card { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 350px; }
         .login-card input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
         .login-card button { width: 100%; padding: 12px; background: var(--verde-militar); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
         /* --- ESTRUCTURA APP --- */
         #contenido-real { display: none; flex-direction: column; height: 100vh; }
-
-        .topbar {
-            background: var(--verde-militar); color: white; height: 50px;
-            display: flex; align-items: center; justify-content: space-between; padding: 0 20px;
-        }
-
+        .topbar { background: var(--verde-militar); color: white; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
         .main-wrapper { display: flex; flex: 1; position: relative; }
 
         /* SIDEBAR */
-        .sidebar {
-            width: var(--sidebar-width); background: var(--verde-militar); color: white;
-            position: absolute; left: -260px; top: 0; height: 100%; transition: 0.3s; padding: 20px; z-index: 100;
-        }
+        .sidebar { width: var(--sidebar-width); background: var(--verde-militar); color: white; position: absolute; left: -260px; top: 0; height: 100%; transition: 0.3s; padding: 20px; z-index: 100; }
         .sidebar.active { left: 0; }
-        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; transition: 0.2s; font-size: 0.9em;}
+        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; font-size: 0.9em; transition: 0.2s;}
         .sidebar li:hover { background: var(--verde-oscuro); }
 
         /* AREA DE TRABAJO */
         .work-area { flex: 1; display: flex; flex-direction: column; transition: 0.3s; }
         .work-area.shifted { margin-left: var(--sidebar-width); }
 
-        /* TABS ESTILO NAVEGADOR */
-        .tabs-bar {
-            background: var(--verde-militar); display: flex; align-items: flex-end;
-            padding: 5px 10px 0 10px; gap: 4px; overflow-x: auto;
-        }
-        .tab {
-            background: var(--verde-oscuro); color: white; padding: 8px 15px;
-            border-radius: 8px 8px 0 0; font-size: 12px; display: flex; align-items: center;
-            gap: 10px; min-width: 120px; cursor: pointer; border: none; opacity: 0.7;
-        }
+        /* TABS ESTILO CHROME */
+        .tabs-bar { background: var(--verde-militar); display: flex; align-items: flex-end; padding: 5px 10px 0 10px; gap: 4px; }
+        .tab { background: var(--verde-oscuro); color: white; padding: 8px 15px; border-radius: 8px 8px 0 0; font-size: 12px; display: flex; align-items: center; gap: 10px; min-width: 120px; cursor: pointer; border: none; opacity: 0.7; }
         .tab.active { background: white; color: var(--verde-militar); opacity: 1; font-weight: bold; }
-        .tab .close-tab { font-size: 14px; opacity: 0.5; transition: 0.3s; }
-        .tab .close-tab:hover { opacity: 1; color: red; }
-        
-        .add-tab-btn {
-            background: none; border: none; color: white; font-size: 20px;
-            padding: 5px 10px; cursor: pointer; margin-bottom: 5px;
-        }
+        .close-tab:hover { color: red; }
 
-        /* VIEWPORT (CONTENIDO) */
-        .viewport {
-            flex: 1; background: white; margin: 15px; border-radius: 12px;
-            padding: 40px; overflow-y: auto; box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
-        }
-
-        /* ESTILO CONSOLA */
-        .console-box {
-            background: #1e1e1e; color: #00ff00; padding: 20px; border-radius: 8px;
-            font-family: 'Courier New', monospace; text-align: left; margin-top: 20px;
-        }
+        /* VIEWPORT */
+        .viewport { flex: 1; background: white; margin: 15px; border-radius: 12px; padding: 40px; box-shadow: inset 0 0 15px rgba(0,0,0,0.05); text-align: center; }
     </style>
 </head>
 <body>
@@ -90,30 +72,44 @@
     <div id="bloque-login">
         <div class="login-card">
             <img src="logo-network.png" style="width: 50px;">
-            <h2 style="margin: 10px 0; color: #4B5320;">NexusCode</h2>
+            <h2 style="margin: 10px 0; color: var(--verde-militar);">NexusCode</h2>
             <input type="password" id="input-pass" placeholder="Contraseña">
-            <button onclick="comprobar()">ENTRAR</button>
-            <p id="error-msg" style="color:red; display:none; font-size:12px; margin-top:10px;">Acceso Incorrecto</p>
+            <button onclick="iniciarCarga()">ENTRAR</button>
         </div>
+    </div>
+
+    <div id="pantalla-carga" class="full-screen-state">
+        <div style="font-size: 50px; margin-bottom: 20px;">↻</div>
+        <div class="loader-bar"><div class="progress" id="barra-progreso"></div></div>
+        <h2 style="margin-top: 20px; letter-spacing: 2px;">CARGANDO CONTENIDO</h2>
+    </div>
+
+    <div id="pantalla-bienvenida" class="full-screen-state">
+        <div class="user-icon-circle"><i class="ri-user-line"></i></div>
+        <h1>USUARIO_01</h1>
+        <div style="margin-top: 20px; display: flex; align-items: center; gap: 10px;">
+            <i class="ri-lock-unlock-line"></i>
+            <h2 style="font-weight: 300;">BIENVENIDO DE NUEVO</h2>
+        </div>
+        <p style="position: absolute; bottom: 20px; left: 20px; font-size: 12px; opacity: 0.7;">✔ Conexión protegida</p>
     </div>
 
     <div id="contenido-real">
         <header class="topbar">
             <div style="display:flex; align-items:center; gap:15px;">
                 <i class="ri-menu-line" style="cursor:pointer; font-size:20px;" onclick="toggleSidebar()"></i>
-                <span style="font-weight:bold; letter-spacing:1px;">NEXUSCODE v1.0</span>
+                <span style="font-weight:bold;">NEXUSCODE</span>
             </div>
             <i class="ri-logout-box-r-line" style="cursor:pointer" onclick="location.reload()"></i>
         </header>
 
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
-                <p style="font-size:10px; opacity:0.6; margin-bottom:15px;">MÓDULOS DE SISTEMA</p>
+                <p style="font-size:10px; opacity:0.6; margin-bottom:15px;">SISTEMA</p>
                 <ul>
-                    <li><i class="ri-terminal-box-line"></i> Terminal Root</li>
-                    <li><i class="ri-shield-flash-line"></i> Firewall Status</li>
-                    <li><i class="ri-folder-open-line"></i> Archivos Secretos</li>
-                    <li><i class="ri-settings-5-line"></i> Preferencias</li>
+                    <li><i class="ri-shield-flash-line"></i> Estado Firewall</li>
+                    <li><i class="ri-database-2-line"></i> Datos</li>
+                    <li><i class="ri-settings-5-line"></i> Ajustes</li>
                 </ul>
             </aside>
 
@@ -123,31 +119,41 @@
                         <span>Pestaña 1</span>
                         <i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>
                     </div>
-                    <button class="add-tab-btn" onclick="addTab()">+</button>
+                    <button style="background:none; border:none; color:white; font-size:20px; padding: 5px 10px; cursor:pointer;" onclick="addTab()">+</button>
                 </div>
-
                 <div class="viewport" id="viewport">
                     <h2 style="color:var(--verde-militar)">Dashboard Operativo</h2>
-                    <p style="color:#666">Bienvenido al núcleo de NexusCode. Sistema listo para comandos.</p>
-                    
-                    <div class="console-box">
-                        > Iniciando sesión segura...<br>
-                        > Encriptación SSL Activada...<br>
-                        > Entorno Windows 11 detectado.<br>
-                        > Esperando entrada de usuario_
-                    </div>
+                    <p style="color:#666; margin-top:10px;">Sistema cargado correctamente. Gestiona tus pestañas arriba.</p>
                 </div>
             </main>
         </div>
     </div>
 
     <script>
-        function comprobar() {
+        function iniciarCarga() {
             if (document.getElementById("input-pass").value === "github_546312!") {
+                // 1. Ocultar Login y mostrar Carga
                 document.getElementById("bloque-login").style.display = "none";
-                document.getElementById("contenido-real").style.display = "flex";
+                document.getElementById("pantalla-carga").style.display = "flex";
+                
+                // 2. Animar barra de progreso
+                setTimeout(() => {
+                    document.getElementById("barra-progreso").style.width = "100%";
+                }, 100);
+
+                // 3. Pasar a Bienvenida tras 2.5 segundos
+                setTimeout(() => {
+                    document.getElementById("pantalla-carga").style.display = "none";
+                    document.getElementById("pantalla-bienvenida").style.display = "flex";
+                }, 2600);
+
+                // 4. Entrar a la App tras 2 segundos más
+                setTimeout(() => {
+                    document.getElementById("pantalla-bienvenida").style.display = "none";
+                    document.getElementById("contenido-real").style.display = "flex";
+                }, 4600);
             } else {
-                document.getElementById("error-msg").style.display = "block";
+                alert("Contraseña incorrecta");
             }
         }
 
@@ -156,36 +162,26 @@
             document.getElementById('work-area').classList.toggle('shifted');
         }
 
-        // FUNCIONALIDAD DE PESTAÑAS
-        let tabCount = 1;
-
+        // Sistema simple de pestañas
         function addTab() {
-            tabCount++;
             const tabsBar = document.getElementById('tabs-bar');
-            const addBtn = tabsBar.querySelector('.add-tab-btn');
-            
+            const btn = tabsBar.querySelector('button');
             const newTab = document.createElement('div');
             newTab.className = 'tab';
             newTab.onclick = function() { selectTab(this); };
-            newTab.innerHTML = `<span>Nueva Pág ${tabCount}</span><i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>`;
-            
-            tabsBar.insertBefore(newTab, addBtn);
+            newTab.innerHTML = `<span>Nueva Pág</span><i class="ri-close-line close-tab" onclick="closeTab(event, this)"></i>`;
+            tabsBar.insertBefore(newTab, btn);
             selectTab(newTab);
         }
 
         function selectTab(el) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
-            // Aquí podrías cambiar el contenido del viewport según la pestaña
         }
 
         function closeTab(event, el) {
-            event.stopPropagation(); // Evita que se dispare el onclick de la pestaña
-            const tab = el.parentElement;
-            if (document.querySelectorAll('.tab').length > 1) {
-                tab.remove();
-                selectTab(document.querySelector('.tab')); // Selecciona la primera disponible
-            }
+            event.stopPropagation();
+            if (document.querySelectorAll('.tab').length > 1) el.parentElement.remove();
         }
     </script>
 </body>
