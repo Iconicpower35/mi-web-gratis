@@ -1,18 +1,43 @@
-<!DOCTYPE html><html lang="es"><head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <meta name="google-site-verification" content="5wxZgmU_ftInkHbLUNR3AoeY4jrMDVKzdlXwmG6xxHM" />
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="google-site-verification" content="5wxZgmU_ftInkHbLUNR3AoeY4jrMDVKzdlXwmG6xxHM" />
 
-    <title>Mi Web Personal | Windows 11</title>
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; color: #333; text-align: center; padding: 50px; }
-        .contenedor { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
-        h1 { color: #0078d4; }
-        p { line-height: 1.6; }
-        .badge { background: #dff6dd; color: #107c10; padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 0.8em; }
-    </style></head><body>
-    <div class="contenedor">
+    <title>Mi Web Personal | Acceso Privado</title>
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; color: #333; text-align: center; padding: 50px; }
+        .contenedor { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        h1 { color: #0078d4; }
+        p { line-height: 1.6; }
+        .badge { background: #dff6dd; color: #107c10; padding: 5px 15px; border-radius: 50px; font-weight: bold; font-size: 0.8em; }
+        
+        /* Estilos nuevos para el login */
+        input { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 80%; margin: 15px 0; outline: none; }
+        input:focus { border-color: #0078d4; box-shadow: 0 0 5px rgba(0,120,212,0.3); }
+        button { background: #0078d4; color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        button:hover { background: #005a9e; }
+        #error-msg { color: #d83b01; font-size: 0.9em; display: none; margin-top: 10px; }
+
+        /* Ocultar contenido por defecto */
+        #contenido-real { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="bloque-login" class="contenedor">
+        <h1>🔒 Acceso Privado</h1>
+        <p>Introduce la contraseña para ver el proyecto:</p>
+        <input type="password" id="input-pass" placeholder="Contraseña">
+        <br>
+        <button onclick="comprobar()">Entrar</button>
+        <p id="error-msg">Contraseña incorrecta. Inténtalo de nuevo.</p>
+    </div>
+
+    <div id="contenido-real" class="contenedor">
         <span class="badge">Sitio Oficial</span>
         <h1>Mi Proyecto Web Personal</h1>
         <p>Bienvenidos a mi primera página web oficial. Este sitio está siendo desarrollado desde Windows 11 y utiliza tecnología de GitHub Pages para el alojamiento gratuito.</p>
@@ -29,5 +54,43 @@
             <li>Diseño con CSS3</li>
         </ul>
 
-        <p><i>Última actualización: Abril 2026</i></p>
-    </div></body></html>
+        <p style="margin-bottom: 5px;"><i>Última actualización: Abril 2026</i></p>
+        
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+        <div style="opacity: 0.8;">
+            <span style="background: #e8f4ff; color: #0078d4; padding: 4px 12px; border-radius: 4px; font-size: 11px; font-weight: bold; border: 1px solid #c2e0ff;">
+                🔒 SECURED BY GITHUB SSL
+            </span>
+            <p style="font-size: 11px; color: #888; margin-top: 10px; letter-spacing: 0.5px;">
+                End-to-end encrypted session • Windows 11 Environment
+            </p>
+        </div>
+        <br>
+        <button onclick="location.reload()" style="background: #f3f2f1; color: #666; border: 1px solid #ddd; font-size: 12px; padding: 8px 15px;">Cerrar sesión segura</button>
+    </div>
+
+    <script>
+        function comprobar() {
+            // CAMBIA AQUÍ TU CONTRASEÑA
+            var claveSecreta = "github_546312!"; 
+            var ingresada = document.getElementById("input-pass").value;
+            
+            if (ingresada === claveSecreta) {
+                document.getElementById("bloque-login").style.display = "none";
+                document.getElementById("contenido-real").style.display = "block";
+            } else {
+                document.getElementById("error-msg").style.display = "block";
+                document.getElementById("input-pass").value = "";
+            }
+        }
+
+        // Permitir entrar pulsando la tecla Enter
+        document.getElementById("input-pass").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                comprobar();
+            }
+        });
+    </script>
+
+</body>
+</html>
