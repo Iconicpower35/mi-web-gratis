@@ -42,26 +42,20 @@
 
         .work-area { flex: 1; display: flex; flex-direction: column; transition: 0.4s; }
         .work-area.shifted { margin-left: var(--sidebar-width); }
-        
         .viewport { flex: 1; padding: 30px; overflow-y: auto; background: #f0f2f0; }
 
-        /* TABLAS */
+        /* TABLAS Y LOGS */
         .user-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
-        .user-table th { background: var(--verde-militar); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
-        .user-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 14px; }
+        .user-table th { background: var(--verde-militar); color: white; padding: 15px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        .user-table td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
         
-        .avatar { display: inline-flex; width: 35px; height: 35px; background: #e0e0e0; border-radius: 50%; align-items: center; justify-content: center; margin-right: 12px; font-size: 18px; color: #555; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
-        
-        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; }
-        .status-admin { background: #d1e9ff; color: #0056b3; }
-        .status-user { background: #e2e2e2; color: #444; }
+        .log-entry { font-family: monospace; font-size: 12px; padding: 8px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
+        .log-date { color: #888; }
+        .log-user { color: var(--verde-militar); font-weight: bold; }
 
-        .action-btn { background: white; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; transition: 0.2s; }
-        .btn-accept { color: #2e7d32; border-color: #2e7d32; }
-        .btn-accept:hover { background: #e8f5e9; }
-        .btn-deny { color: #d32f2f; border-color: #d32f2f; }
-        .btn-deny:hover { background: #ffebee; }
-        
+        /* BLOQUE DE NOTAS PERSONAL */
+        .personal-notes { width: 100%; height: 300px; padding: 20px; border-radius: 12px; border: 1px solid #ddd; font-family: 'Segoe UI', sans-serif; resize: none; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
@@ -71,88 +65,94 @@
         <div class="login-card">
             <h2 style="color: var(--verde-militar); margin-bottom: 20px;">NexusCode OS</h2>
             <input type="text" id="login-nombre" placeholder="Nombre Operativo">
-            <input type="text" id="login-rango" placeholder="Rango (Ej: Sniper)">
+            <input type="text" id="login-rango" placeholder="Rango">
             <input type="password" id="login-pass" placeholder="Contraseña">
             <button onclick="iniciarSesion()">AUTENTICAR</button>
-            <button class="request-access" onclick="enviarSolicitud()">Solicitar Acceso al Sistema</button>
+            <button class="request-access" onclick="enviarSolicitud()">Solicitar Acceso</button>
         </div>
-        <div class="footer-protect" style="position: fixed; bottom: 10px; font-size: 9px; opacity: 0.5;">SECURE SESSION • WINDOWS 11 ENVIRONMENT</div>
     </div>
 
     <div id="pantalla-carga" class="full-screen-state">
         <div class="spinner"><i class="ri-loader-4-line"></i></div>
         <div class="loader-bar"><div class="progress" id="barra-progreso"></div></div>
-        <p style="margin-top: 15px; letter-spacing: 2px; font-size: 12px;">SISTEMA ENCRIPTADO</p>
     </div>
 
     <div id="pantalla-bienvenida" class="full-screen-state">
-        <div style="font-size: 100px; margin-bottom: 20px;"><i class="ri-account-circle-line"></i></div>
-        <h1 id="user-display" style="text-transform: uppercase; letter-spacing: 3px;">USUARIO</h1>
-        <h2 id="role-display" style="font-weight: 300; opacity: 0.7; font-size: 16px;">RANGO: -</h2>
-        <p style="position: absolute; bottom: 30px; font-size: 11px;"><i class="ri-shield-check-line"></i> CONEXIÓN PROTEGIDA</p>
+        <div style="font-size: 80px; margin-bottom: 20px;"><i class="ri-account-circle-line"></i></div>
+        <h1 id="user-display">USUARIO</h1>
+        <h2 id="role-display" style="font-weight: 300; opacity: 0.7;">RANGO: -</h2>
     </div>
 
     <div id="contenido-real">
         <header class="topbar">
             <div style="display:flex; align-items:center; gap:15px;">
-                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer; font-size: 20px;"></i>
-                <span style="font-weight:bold; font-size: 12px; letter-spacing: 1px;">NEXUSCODE CENTRAL COMMAND</span>
+                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer"></i>
+                <span id="topbar-user" style="font-weight:bold; font-size: 12px; letter-spacing: 1px;">SISTEMA ACTIVO</span>
             </div>
-            <button onclick="location.reload()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 5px 15px; border-radius: 4px; cursor:pointer; font-size: 11px;">LOGOUT</button>
+            <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer; font-size: 11px;">CERRAR SESIÓN</button>
         </header>
 
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
-                <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">OPERACIONES</p>
-                <ul id="menu-list">
-                    <li onclick="showDashboard()"><i class="ri-dashboard-line"></i> Dashboard</li>
+                <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">MI TERMINAL</p>
+                <ul>
+                    <li onclick="showDashboard()"><i class="ri-dashboard-line"></i> Inicio</li>
+                    <li onclick="showPersonalSpace()"><i class="ri-sticky-note-line"></i> Mis Notas</li>
                 </ul>
                 <div id="admin-menu" style="display:none; margin-top: 25px;">
                     <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">ADMINISTRACIÓN</p>
-                    <ul id="menu-list-admin">
-                        <li onclick="showRequestPanel()" style="color: #ffcc00;"><i class="ri-user-add-line"></i> SOLICITUDES</li>
-                        <li onclick="showUserPanel()"><i class="ri-team-line"></i> PERSONAL</li>
-                        <li><i class="ri-history-line"></i> LOGS DE SISTEMA</li>
+                    <ul>
+                        <li onclick="showRequestPanel()" style="color: #ffcc00;"><i class="ri-user-add-line"></i> Solicitudes</li>
+                        <li onclick="showUserPanel()"><i class="ri-team-line"></i> Personal</li>
+                        <li onclick="showLogs()"><i class="ri-terminal-window-line"></i> Logs de Sistema</li>
                     </ul>
                 </div>
             </aside>
 
             <main class="work-area" id="work-area">
-                <div class="viewport" id="main-view">
-                    </div>
+                <div class="viewport" id="main-view"></div>
             </main>
         </div>
     </div>
 
     <script>
-        const ADMIN_PASS = "admin_nexus";
-
-        // Cargar datos de LocalStorage o usar valores por defecto
+        // --- BASE DE DATOS LOCAL ---
         let USERS = JSON.parse(localStorage.getItem('nexus_users')) || [
             { name: "ADMIN_COMMAND", range: "Overseer", role: "ADMIN", pass: "admin_nexus" }
         ];
         let REQUESTS = JSON.parse(localStorage.getItem('nexus_requests')) || [];
+        let LOGS = JSON.parse(localStorage.getItem('nexus_logs')) || [];
+        let PERSONAL_DATA = JSON.parse(localStorage.getItem('nexus_personal')) || {};
 
         let currentUser = null;
 
         function saveDB() {
             localStorage.setItem('nexus_users', JSON.stringify(USERS));
             localStorage.setItem('nexus_requests', JSON.stringify(REQUESTS));
+            localStorage.setItem('nexus_logs', JSON.stringify(LOGS));
+            localStorage.setItem('nexus_personal', JSON.stringify(PERSONAL_DATA));
         }
 
+        function addLog(action) {
+            const now = new Date();
+            const timeStr = now.toLocaleDateString() + " " + now.toLocaleTimeString();
+            LOGS.unshift({ user: currentUser ? currentUser.name : "Sistema", action: action, date: timeStr });
+            saveDB();
+        }
+
+        // --- SESIÓN ---
         function iniciarSesion() {
             const nombre = document.getElementById("login-nombre").value;
             const pass = document.getElementById("login-pass").value;
-            
-            // Buscar si el usuario existe y la clave coincide
-            const userMatch = USERS.find(u => u.name === nombre && u.pass === pass);
+            const match = USERS.find(u => u.name === nombre && u.pass === pass);
 
-            if (userMatch) {
-                currentUser = userMatch;
+            if (match) {
+                currentUser = match;
+                addLog("Inicio de sesión exitoso");
                 document.getElementById("bloque-login").style.display = "none";
                 animarEntrada();
             } else {
-                alert("Credenciales no encontradas o acceso aún no autorizado.");
+                alert("Acceso denegado.");
             }
         }
 
@@ -160,115 +160,100 @@
             const nombre = document.getElementById("login-nombre").value;
             const rango = document.getElementById("login-rango").value;
             const pass = document.getElementById("login-pass").value;
-
-            if(!nombre || !pass) { alert("Complete Nombre y Contraseña para solicitar."); return; }
+            if(!nombre || !pass) return alert("Rellene nombre y clave.");
             
-            const existe = USERS.find(u => u.name === nombre) || REQUESTS.find(r => r.name === nombre);
-            if(existe) { alert("Este nombre ya está en uso o pendiente."); return; }
-
             REQUESTS.push({ name: nombre, range: rango || "Recruit", pass: pass });
             saveDB();
-            alert("Solicitud enviada. Contacte con un Administrador para su aprobación.");
+            // Log sin usuario activo
+            const time = new Date().toLocaleString();
+            LOGS.unshift({ user: nombre, action: "Solicitud de acceso enviada", date: time });
+            saveDB();
+            alert("Solicitud enviada.");
         }
 
         function animarEntrada() {
-            const carga = document.getElementById("pantalla-carga");
-            carga.style.display = "flex";
+            document.getElementById("pantalla-carga").style.display = "flex";
             setTimeout(() => { document.getElementById("barra-progreso").style.width = "100%"; }, 100);
-
             setTimeout(() => {
-                carga.style.display = "none";
+                document.getElementById("pantalla-carga").style.display = "none";
                 document.getElementById("user-display").innerText = currentUser.name;
-                document.getElementById("role-display").innerText = `RANGO: ${currentUser.range} | CLASE: ${currentUser.role}`;
+                document.getElementById("role-display").innerText = `RANGO: ${currentUser.range}`;
                 document.getElementById("pantalla-bienvenida").style.display = "flex";
-
                 setTimeout(() => {
                     document.getElementById("pantalla-bienvenida").style.display = "none";
                     document.getElementById("contenido-real").style.display = "flex";
+                    document.getElementById("topbar-user").innerText = `OPERATIVO: ${currentUser.name}`;
                     if(currentUser.role === 'ADMIN') document.getElementById("admin-menu").style.display = "block";
                     showDashboard();
-                }, 3000);
+                }, 2500);
             }, 3500);
         }
 
-        // --- PANELES ---
-
+        // --- VISTAS ---
         function showDashboard() {
             document.getElementById("main-view").innerHTML = `
-                <h1 style="color: var(--verde-militar)">Dashboard Operativo</h1>
-                <p style="margin-top: 10px; color: #666;">Bienvenido al centro de mando, ${currentUser.name}.</p>
-                <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 12px; border-left: 5px solid var(--verde-militar);">
-                    <h3 style="font-size: 14px;">ESTADO DE LA RED</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: #2e7d32;">ONLINE</p>
+                <h1 style="color:var(--verde-militar)">Panel de Control</h1>
+                <p>Bienvenido de nuevo, ${currentUser.name}. Los sistemas están operativos.</p>
+                <div style="margin-top:20px; padding:20px; background:white; border-radius:12px;">
+                    <h3>Última actividad en el sistema:</h3>
+                    <p style="font-size:12px; color:#666; margin-top:5px;">${LOGS[0] ? LOGS[0].action + " (" + LOGS[0].date + ")" : "Sin registros"}</p>
                 </div>
             `;
         }
 
-        function showRequestPanel() {
-            let rows = REQUESTS.map((req, index) => `
-                <tr>
-                    <td><div class="avatar"><i class="ri-user-add-line"></i></div> <b>${req.name}</b></td>
-                    <td>${req.range}</td>
-                    <td><span class="status-badge" style="background:#fff3e0; color:#ef6c00;">PENDIENTE</span></td>
-                    <td>
-                        <button class="action-btn btn-accept" onclick="acceptRequest(${index})">ACEPTAR</button>
-                        <button class="action-btn btn-deny" onclick="deleteRequest(${index})">DENEGAR</button>
-                    </td>
-                </tr>
-            `).join('');
-
+        function showPersonalSpace() {
+            // Cargar notas específicas del usuario
+            const userNotes = PERSONAL_DATA[currentUser.name] || "";
             document.getElementById("main-view").innerHTML = `
-                <h2><i class="ri-user-add-line"></i> Solicitudes de Acceso</h2>
-                <table class="user-table">
-                    <thead><tr><th>Usuario</th><th>Rango</th><th>Estado</th><th>Acción</th></tr></thead>
-                    <tbody>${rows || '<tr><td colspan="4" style="text-align:center; padding:40px; color:#999;">No hay solicitudes pendientes</td></tr>'}</tbody>
-                </table>
+                <h2><i class="ri-sticky-note-line"></i> Mis Notas Privadas</h2>
+                <p style="font-size:12px; color:#888; margin-bottom:15px;">Este contenido solo es visible para ti.</p>
+                <textarea class="personal-notes" id="note-area" placeholder="Escribe aquí tus órdenes o notas secretas...">${userNotes}</textarea>
+                <button onclick="saveNotes()" style="margin-top:10px; padding:10px 20px; background:var(--verde-militar); color:white; border:none; border-radius:8px; cursor:pointer;">Guardar Notas</button>
             `;
+        }
+
+        function saveNotes() {
+            const text = document.getElementById("note-area").value;
+            PERSONAL_DATA[currentUser.name] = text;
+            saveDB();
+            addLog("Notas personales actualizadas");
+            alert("Notas guardadas en tu terminal privada.");
+        }
+
+        function showLogs() {
+            let logHtml = LOGS.map(l => `
+                <div class="log-entry">
+                    <span><span class="log-user">[${l.user}]</span> ${l.action}</span>
+                    <span class="log-date">${l.date}</span>
+                </div>
+            `).join('');
+            document.getElementById("main-view").innerHTML = `
+                <h2><i class="ri-terminal-window-line"></i> Registro de Logs</h2>
+                <div style="background:white; border-radius:12px; margin-top:20px; padding:10px;">${logHtml || "No hay logs registrados."}</div>
+            `;
+        }
+
+        function showRequestPanel() {
+            let rows = REQUESTS.map((req, i) => `
+                <tr>
+                    <td><b>${req.name}</b></td><td>${req.range}</td>
+                    <td><button class="btn-promote" style="padding:5px;cursor:pointer" onclick="acceptReq(${i})">ACEPTAR</button></td>
+                </tr>`).join('');
+            document.getElementById("main-view").innerHTML = `<h2>Solicitudes</h2><table class="user-table"><thead><tr><th>Nombre</th><th>Rango</th><th>Acción</th></tr></thead><tbody>${rows}</tbody></table>`;
+        }
+
+        function acceptReq(i) {
+            const req = REQUESTS[i];
+            USERS.push({ ...req, role: 'USER' });
+            addLog(`Aceptó solicitud de acceso de: ${req.name}`);
+            REQUESTS.splice(i, 1);
+            saveDB();
+            showRequestPanel();
         }
 
         function showUserPanel() {
-            let rows = USERS.map((u, index) => `
-                <tr>
-                    <td><div class="avatar"><i class="ri-user-line"></i></div> ${u.name}</td>
-                    <td>${u.range}</td>
-                    <td><span class="status-badge ${u.role === 'ADMIN' ? 'status-admin' : 'status-user'}">${u.role}</span></td>
-                    <td>
-                        ${u.name !== currentUser.name ? `<button class="action-btn btn-deny" onclick="deleteUser(${index})">DAR DE BAJA</button>` : '-'}
-                    </td>
-                </tr>
-            `).join('');
-
-            document.getElementById("main-view").innerHTML = `
-                <h2><i class="ri-team-line"></i> Personal Autorizado</h2>
-                <table class="user-table">
-                    <thead><tr><th>Nombre</th><th>Rango</th><th>Rol</th><th>Acción</th></tr></thead>
-                    <tbody>${rows}</tbody>
-                </table>
-            `;
-        }
-
-        // --- ACCIONES ---
-
-        function acceptRequest(index) {
-            const req = REQUESTS[index];
-            USERS.push({ ...req, role: 'USER' });
-            REQUESTS.splice(index, 1);
-            saveDB();
-            showRequestPanel();
-        }
-
-        function deleteRequest(index) {
-            REQUESTS.splice(index, 1);
-            saveDB();
-            showRequestPanel();
-        }
-
-        function deleteUser(index) {
-            if(confirm("¿Dar de baja a este usuario permanentemente?")) {
-                USERS.splice(index, 1);
-                saveDB();
-                showUserPanel();
-            }
+            let rows = USERS.map(u => `<tr><td>${u.name}</td><td>${u.range}</td><td>${u.role}</td></tr>`).join('');
+            document.getElementById("main-view").innerHTML = `<h2>Personal</h2><table class="user-table"><thead><tr><th>Nombre</th><th>Rango</th><th>Rol</th></tr></thead><tbody>${rows}</tbody></table>`;
         }
 
         function toggleSidebar() {
