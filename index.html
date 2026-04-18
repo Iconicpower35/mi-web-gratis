@@ -17,12 +17,6 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f0; overflow: hidden; height: 100vh; }
 
-        /* --- ANIMACIONES --- */
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-        .fade-out { opacity: 0; transition: opacity 0.8s ease; }
-        .fade-in { animation: fadeIn 0.8s forwards; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
         /* --- PANTALLAS --- */
         .full-screen-state { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--verde-militar); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; text-align: center; }
         .spinner { font-size: 60px; animation: spin 2s linear infinite; margin-bottom: 20px; }
@@ -30,10 +24,11 @@
         .progress { width: 0%; height: 100%; background: white; transition: width 3s linear; }
 
         /* --- LOGIN --- */
-        #bloque-login { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--verde-militar); }
+        #bloque-login { display: flex; justify-content: center; align-items: center; height: 100vh; background: var(--verde-militar); flex-direction: column;}
         .login-card { background: white; padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3); width: 350px; }
-        .login-card input { width: 100%; padding: 12px; margin: 15px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
-        .login-card button { width: 100%; padding: 12px; background: var(--verde-militar); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        .login-card input { width: 100%; padding: 12px; margin: 8px 0; border-radius: 8px; border: 1px solid #ddd; outline: none; }
+        .login-card button { width: 100%; padding: 12px; background: var(--verde-militar); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px;}
+        .request-access { margin-top: 15px; font-size: 13px; color: #888; cursor: pointer; border: none; background: none; }
 
         /* --- APP PRINCIPAL --- */
         #contenido-real { display: none; flex-direction: column; height: 100vh; }
@@ -42,150 +37,238 @@
         
         .sidebar { width: var(--sidebar-width); background: var(--verde-militar); color: white; position: absolute; left: -260px; top: 0; height: 100%; transition: 0.4s; padding: 20px; z-index: 100; }
         .sidebar.active { left: 0; }
-        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; transition: 0.3s; }
+        .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; transition: 0.3s; font-size: 14px; }
         .sidebar li:hover { background: var(--verde-oscuro); }
 
         .work-area { flex: 1; display: flex; flex-direction: column; transition: 0.4s; }
         .work-area.shifted { margin-left: var(--sidebar-width); }
-        .tabs-bar { background: var(--verde-militar); display: flex; align-items: flex-end; padding: 5px 10px 0 10px; gap: 4px; }
-        .tab { background: var(--verde-oscuro); color: white; padding: 8px 15px; border-radius: 8px 8px 0 0; font-size: 11px; cursor: pointer; border: none; min-width: 120px; opacity: 0.7; }
-        .tab.active { background: #f0f2f0; color: var(--verde-militar); opacity: 1; font-weight: bold; }
         
         .viewport { flex: 1; padding: 30px; overflow-y: auto; background: #f0f2f0; }
 
-        /* TABLAS ADMIN */
-        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; margin-top: 20px; font-size: 14px; }
-        th { background: var(--verde-militar); color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .status-badge { padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; }
-        .status-admin { background: #e3f2fd; color: #1976d2; }
-        .status-user { background: #f5f5f5; color: #616161; }
+        /* TABLAS */
+        .user-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
+        .user-table th { background: var(--verde-militar); color: white; padding: 15px; text-align: left; font-size: 13px; text-transform: uppercase; letter-spacing: 1px; }
+        .user-table td { padding: 15px; border-bottom: 1px solid #eee; vertical-align: middle; font-size: 14px; }
+        
+        .avatar { display: inline-flex; width: 35px; height: 35px; background: #e0e0e0; border-radius: 50%; align-items: center; justify-content: center; margin-right: 12px; font-size: 18px; color: #555; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);}
+        
+        .status-badge { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; letter-spacing: 0.5px; }
+        .status-admin { background: #d1e9ff; color: #0056b3; }
+        .status-user { background: #e2e2e2; color: #444; }
 
-        /* FOOTER PROTECT */
-        .footer-protect { position: fixed; bottom: 10px; left: 15px; font-size: 9px; color: rgba(255,255,255,0.4); letter-spacing: 1px; z-index: 101; pointer-events: none; }
-        #contenido-real .footer-protect { color: #888; }
+        .action-btn { background: white; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: 600; margin-right: 5px; transition: 0.2s; }
+        .btn-accept { color: #2e7d32; border-color: #2e7d32; }
+        .btn-accept:hover { background: #e8f5e9; }
+        .btn-deny { color: #d32f2f; border-color: #d32f2f; }
+        .btn-deny:hover { background: #ffebee; }
+        
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="bloque-login">
         <div class="login-card">
-            <h2 style="color: var(--verde-militar);">NexusCode</h2>
-            <input type="password" id="input-pass" placeholder="Contraseña">
-            <button onclick="iniciarSesion()">ENTRAR</button>
+            <h2 style="color: var(--verde-militar); margin-bottom: 20px;">NexusCode OS</h2>
+            <input type="text" id="login-nombre" placeholder="Nombre Operativo">
+            <input type="text" id="login-rango" placeholder="Rango (Ej: Sniper)">
+            <input type="password" id="login-pass" placeholder="Contraseña">
+            <button onclick="iniciarSesion()">AUTENTICAR</button>
+            <button class="request-access" onclick="enviarSolicitud()">Solicitar Acceso al Sistema</button>
         </div>
-        <div class="footer-protect">SECURE SESSION • WINDOWS 11 ENVIRONMENT</div>
+        <div class="footer-protect" style="position: fixed; bottom: 10px; font-size: 9px; opacity: 0.5;">SECURE SESSION • WINDOWS 11 ENVIRONMENT</div>
     </div>
 
     <div id="pantalla-carga" class="full-screen-state">
         <div class="spinner"><i class="ri-loader-4-line"></i></div>
         <div class="loader-bar"><div class="progress" id="barra-progreso"></div></div>
+        <p style="margin-top: 15px; letter-spacing: 2px; font-size: 12px;">SISTEMA ENCRIPTADO</p>
     </div>
 
     <div id="pantalla-bienvenida" class="full-screen-state">
-        <h1 id="user-display">USUARIO_01</h1>
-        <h2 id="role-display" style="font-weight: 300; opacity: 0.7;">RANGO: OPERADOR</h2>
+        <div style="font-size: 100px; margin-bottom: 20px;"><i class="ri-account-circle-line"></i></div>
+        <h1 id="user-display" style="text-transform: uppercase; letter-spacing: 3px;">USUARIO</h1>
+        <h2 id="role-display" style="font-weight: 300; opacity: 0.7; font-size: 16px;">RANGO: -</h2>
+        <p style="position: absolute; bottom: 30px; font-size: 11px;"><i class="ri-shield-check-line"></i> CONEXIÓN PROTEGIDA</p>
     </div>
 
     <div id="contenido-real">
         <header class="topbar">
             <div style="display:flex; align-items:center; gap:15px;">
-                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer"></i>
-                <span style="font-weight:bold; font-size: 12px;">NEXUSCODE OS</span>
+                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer; font-size: 20px;"></i>
+                <span style="font-weight:bold; font-size: 12px; letter-spacing: 1px;">NEXUSCODE CENTRAL COMMAND</span>
             </div>
-            <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer">Cerrar sesión</button>
+            <button onclick="location.reload()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding: 5px 15px; border-radius: 4px; cursor:pointer; font-size: 11px;">LOGOUT</button>
         </header>
 
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
+                <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">OPERACIONES</p>
                 <ul id="menu-list">
-                    <li><i class="ri-dashboard-line"></i> Mi Panel</li>
-                    <li><i class="ri-file-list-3-line"></i> Mis Archivos</li>
+                    <li onclick="showDashboard()"><i class="ri-dashboard-line"></i> Dashboard</li>
+                </ul>
+                <div id="admin-menu" style="display:none; margin-top: 25px;">
+                    <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">ADMINISTRACIÓN</p>
+                    <ul id="menu-list-admin">
+                        <li onclick="showRequestPanel()" style="color: #ffcc00;"><i class="ri-user-add-line"></i> SOLICITUDES</li>
+                        <li onclick="showUserPanel()"><i class="ri-team-line"></i> PERSONAL</li>
+                        <li><i class="ri-history-line"></i> LOGS DE SISTEMA</li>
                     </ul>
+                </div>
             </aside>
 
             <main class="work-area" id="work-area">
-                <div class="tabs-bar" id="tabs-bar">
-                    <div class="tab active"><span>Dashboard</span></div>
-                </div>
                 <div class="viewport" id="main-view">
-                    <h2>Cargando sistema...</h2>
-                </div>
+                    </div>
             </main>
         </div>
-        <div class="footer-protect">SECURE SESSION • WINDOWS 11 ENVIRONMENT</div>
     </div>
 
     <script>
-        // CONFIGURACIÓN DE ROLES (SIMULADA)
-        const USERS_DB = {
-            "admin123": { name: "ADMIN_ROOT", role: "ADMIN" },
-            "user123": { name: "USER_GUEST", role: "USER" }
-        };
+        const ADMIN_PASS = "admin_nexus";
+
+        // Cargar datos de LocalStorage o usar valores por defecto
+        let USERS = JSON.parse(localStorage.getItem('nexus_users')) || [
+            { name: "ADMIN_COMMAND", range: "Overseer", role: "ADMIN", pass: "admin_nexus" }
+        ];
+        let REQUESTS = JSON.parse(localStorage.getItem('nexus_requests')) || [];
 
         let currentUser = null;
 
+        function saveDB() {
+            localStorage.setItem('nexus_users', JSON.stringify(USERS));
+            localStorage.setItem('nexus_requests', JSON.stringify(REQUESTS));
+        }
+
         function iniciarSesion() {
-            const pass = document.getElementById("input-pass").value;
+            const nombre = document.getElementById("login-nombre").value;
+            const pass = document.getElementById("login-pass").value;
             
-            if (USERS_DB[pass]) {
-                currentUser = USERS_DB[pass];
+            // Buscar si el usuario existe y la clave coincide
+            const userMatch = USERS.find(u => u.name === nombre && u.pass === pass);
+
+            if (userMatch) {
+                currentUser = userMatch;
                 document.getElementById("bloque-login").style.display = "none";
-                ejecutarAnimaciones();
+                animarEntrada();
             } else {
-                alert("Acceso Denegado");
+                alert("Credenciales no encontradas o acceso aún no autorizado.");
             }
         }
 
-        function ejecutarAnimaciones() {
+        function enviarSolicitud() {
+            const nombre = document.getElementById("login-nombre").value;
+            const rango = document.getElementById("login-rango").value;
+            const pass = document.getElementById("login-pass").value;
+
+            if(!nombre || !pass) { alert("Complete Nombre y Contraseña para solicitar."); return; }
+            
+            const existe = USERS.find(u => u.name === nombre) || REQUESTS.find(r => r.name === nombre);
+            if(existe) { alert("Este nombre ya está en uso o pendiente."); return; }
+
+            REQUESTS.push({ name: nombre, range: rango || "Recruit", pass: pass });
+            saveDB();
+            alert("Solicitud enviada. Contacte con un Administrador para su aprobación.");
+        }
+
+        function animarEntrada() {
             const carga = document.getElementById("pantalla-carga");
             carga.style.display = "flex";
             setTimeout(() => { document.getElementById("barra-progreso").style.width = "100%"; }, 100);
 
             setTimeout(() => {
                 carga.style.display = "none";
-                const bienvenida = document.getElementById("pantalla-bienvenida");
                 document.getElementById("user-display").innerText = currentUser.name;
-                document.getElementById("role-display").innerText = "RANGO: " + currentUser.role;
-                bienvenida.style.display = "flex";
+                document.getElementById("role-display").innerText = `RANGO: ${currentUser.range} | CLASE: ${currentUser.role}`;
+                document.getElementById("pantalla-bienvenida").style.display = "flex";
 
                 setTimeout(() => {
-                    bienvenida.style.display = "none";
-                    cargarApp();
+                    document.getElementById("pantalla-bienvenida").style.display = "none";
+                    document.getElementById("contenido-real").style.display = "flex";
+                    if(currentUser.role === 'ADMIN') document.getElementById("admin-menu").style.display = "block";
+                    showDashboard();
                 }, 3000);
             }, 3500);
         }
 
-        function cargarApp() {
-            document.getElementById("contenido-real").style.display = "flex";
-            const menu = document.getElementById("menu-list");
-            const view = document.getElementById("main-view");
+        // --- PANELES ---
 
-            if (currentUser.role === "ADMIN") {
-                // Añadir opciones de Admin
-                menu.innerHTML += `
-                    <li style="color: #ffcc00;" onclick="showAdminPanel()"><i class="ri-shield-user-line"></i> GESTIÓN DE ROLES</li>
-                    <li style="color: #ffcc00;"><i class="ri-history-line"></i> REGISTRO DE LOGS</li>
-                `;
-                view.innerHTML = `<h1>Bienvenido, Administrador</h1><p>Tienes acceso total al sistema.</p>`;
-            } else {
-                view.innerHTML = `<h1>Bienvenido, Usuario</h1><p>Tu acceso es limitado al área operativa.</p>`;
-            }
+        function showDashboard() {
+            document.getElementById("main-view").innerHTML = `
+                <h1 style="color: var(--verde-militar)">Dashboard Operativo</h1>
+                <p style="margin-top: 10px; color: #666;">Bienvenido al centro de mando, ${currentUser.name}.</p>
+                <div style="margin-top: 20px; background: white; padding: 20px; border-radius: 12px; border-left: 5px solid var(--verde-militar);">
+                    <h3 style="font-size: 14px;">ESTADO DE LA RED</h3>
+                    <p style="font-size: 24px; font-weight: bold; color: #2e7d32;">ONLINE</p>
+                </div>
+            `;
         }
 
-        function showAdminPanel() {
+        function showRequestPanel() {
+            let rows = REQUESTS.map((req, index) => `
+                <tr>
+                    <td><div class="avatar"><i class="ri-user-add-line"></i></div> <b>${req.name}</b></td>
+                    <td>${req.range}</td>
+                    <td><span class="status-badge" style="background:#fff3e0; color:#ef6c00;">PENDIENTE</span></td>
+                    <td>
+                        <button class="action-btn btn-accept" onclick="acceptRequest(${index})">ACEPTAR</button>
+                        <button class="action-btn btn-deny" onclick="deleteRequest(${index})">DENEGAR</button>
+                    </td>
+                </tr>
+            `).join('');
+
             document.getElementById("main-view").innerHTML = `
-                <h2>Panel de Administración de Usuarios</h2>
-                <table>
-                    <thead>
-                        <tr><th>Usuario</th><th>Rol Actual</th><th>Acción</th></tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>USER_GUEST</td><td><span class="status-badge status-user">USER</span></td><td><button>Ascender</button></td></tr>
-                        <tr><td>ADMIN_ROOT</td><td><span class="status-badge status-admin">ADMIN</span></td><td>-</td></tr>
-                    </tbody>
+                <h2><i class="ri-user-add-line"></i> Solicitudes de Acceso</h2>
+                <table class="user-table">
+                    <thead><tr><th>Usuario</th><th>Rango</th><th>Estado</th><th>Acción</th></tr></thead>
+                    <tbody>${rows || '<tr><td colspan="4" style="text-align:center; padding:40px; color:#999;">No hay solicitudes pendientes</td></tr>'}</tbody>
                 </table>
             `;
+        }
+
+        function showUserPanel() {
+            let rows = USERS.map((u, index) => `
+                <tr>
+                    <td><div class="avatar"><i class="ri-user-line"></i></div> ${u.name}</td>
+                    <td>${u.range}</td>
+                    <td><span class="status-badge ${u.role === 'ADMIN' ? 'status-admin' : 'status-user'}">${u.role}</span></td>
+                    <td>
+                        ${u.name !== currentUser.name ? `<button class="action-btn btn-deny" onclick="deleteUser(${index})">DAR DE BAJA</button>` : '-'}
+                    </td>
+                </tr>
+            `).join('');
+
+            document.getElementById("main-view").innerHTML = `
+                <h2><i class="ri-team-line"></i> Personal Autorizado</h2>
+                <table class="user-table">
+                    <thead><tr><th>Nombre</th><th>Rango</th><th>Rol</th><th>Acción</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>
+            `;
+        }
+
+        // --- ACCIONES ---
+
+        function acceptRequest(index) {
+            const req = REQUESTS[index];
+            USERS.push({ ...req, role: 'USER' });
+            REQUESTS.splice(index, 1);
+            saveDB();
+            showRequestPanel();
+        }
+
+        function deleteRequest(index) {
+            REQUESTS.splice(index, 1);
+            saveDB();
+            showRequestPanel();
+        }
+
+        function deleteUser(index) {
+            if(confirm("¿Dar de baja a este usuario permanentemente?")) {
+                USERS.splice(index, 1);
+                saveDB();
+                showUserPanel();
+            }
         }
 
         function toggleSidebar() {
