@@ -17,7 +17,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f0; overflow: hidden; height: 100vh; }
 
-        /* --- PANTALLAS --- */
+        /* --- PANTALLAS DE ESTADO --- */
         .full-screen-state { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--verde-militar); color: white; display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; text-align: center; }
         .spinner { font-size: 60px; animation: spin 2s linear infinite; margin-bottom: 20px; }
         .loader-bar { width: 300px; height: 8px; background: rgba(255,255,255,0.2); border-radius: 10px; margin-top: 20px; overflow: hidden; }
@@ -32,10 +32,14 @@
 
         /* --- APP PRINCIPAL --- */
         #contenido-real { display: none; flex-direction: column; height: 100vh; }
-        .topbar { background: var(--verde-militar); color: white; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+        .topbar { background: var(--verde-militar); color: white; height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; z-index: 1000; }
         .main-wrapper { display: flex; flex: 1; position: relative; }
         
-        .sidebar { width: var(--sidebar-width); background: var(--verde-militar); color: white; position: absolute; left: -260px; top: 0; height: 100%; transition: 0.4s; padding: 20px; z-index: 100; }
+        .sidebar { 
+            width: var(--sidebar-width); background: var(--verde-militar); color: white; 
+            position: absolute; left: -260px; top: 0; height: 100%; transition: 0.4s; 
+            padding: 20px; z-index: 100; overflow-y: auto;
+        }
         .sidebar.active { left: 0; }
         .sidebar li { list-style: none; padding: 12px; border-radius: 8px; cursor: pointer; margin-bottom: 5px; display: flex; align-items: center; gap: 10px; transition: 0.3s; font-size: 14px; }
         .sidebar li:hover { background: var(--verde-oscuro); }
@@ -44,61 +48,65 @@
         .work-area.shifted { margin-left: var(--sidebar-width); }
         .viewport { flex: 1; padding: 30px; overflow-y: auto; background: #f0f2f0; }
 
-        /* TABLAS Y LOGS */
+        /* TABLAS Y ELEMENTOS VISUALES */
         .user-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);}
         .user-table th { background: var(--verde-militar); color: white; padding: 15px; text-align: left; font-size: 12px; text-transform: uppercase; }
         .user-table td { padding: 12px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
         
         .log-entry { font-family: monospace; font-size: 12px; padding: 8px; border-bottom: 1px solid #ddd; display: flex; justify-content: space-between; }
-        .log-date { color: #888; }
         .log-user { color: var(--verde-militar); font-weight: bold; }
 
-        /* BLOQUE DE NOTAS PERSONAL */
-        .personal-notes { width: 100%; height: 300px; padding: 20px; border-radius: 12px; border: 1px solid #ddd; font-family: 'Segoe UI', sans-serif; resize: none; outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.05); }
+        .personal-notes { width: 100%; height: 350px; padding: 20px; border-radius: 12px; border: 1px solid #ddd; font-family: 'Segoe UI', sans-serif; resize: none; outline: none; }
 
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
+    <!-- PANTALLA LOGIN -->
     <div id="bloque-login">
         <div class="login-card">
             <h2 style="color: var(--verde-militar); margin-bottom: 20px;">NexusCode OS</h2>
             <input type="text" id="login-nombre" placeholder="Nombre Operativo">
-            <input type="text" id="login-rango" placeholder="Rango">
+            <input type="text" id="login-rango" placeholder="Rango (Ej: Sniper)">
             <input type="password" id="login-pass" placeholder="Contraseña">
             <button onclick="iniciarSesion()">AUTENTICAR</button>
             <button class="request-access" onclick="enviarSolicitud()">Solicitar Acceso</button>
         </div>
     </div>
 
+    <!-- PANTALLA CARGA -->
     <div id="pantalla-carga" class="full-screen-state">
         <div class="spinner"><i class="ri-loader-4-line"></i></div>
         <div class="loader-bar"><div class="progress" id="barra-progreso"></div></div>
+        <p style="margin-top:15px; font-size:10px; letter-spacing:2px;">CARGANDO NÚCLEO SEGURO</p>
     </div>
 
+    <!-- PANTALLA BIENVENIDA -->
     <div id="pantalla-bienvenida" class="full-screen-state">
         <div style="font-size: 80px; margin-bottom: 20px;"><i class="ri-account-circle-line"></i></div>
         <h1 id="user-display">USUARIO</h1>
         <h2 id="role-display" style="font-weight: 300; opacity: 0.7;">RANGO: -</h2>
     </div>
 
+    <!-- INTERFAZ PRINCIPAL -->
     <div id="contenido-real">
         <header class="topbar">
             <div style="display:flex; align-items:center; gap:15px;">
-                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer"></i>
-                <span id="topbar-user" style="font-weight:bold; font-size: 12px; letter-spacing: 1px;">SISTEMA ACTIVO</span>
+                <i class="ri-menu-line" onclick="toggleSidebar()" style="cursor:pointer; font-size: 20px;"></i>
+                <span id="topbar-user" style="font-weight:bold; font-size: 11px; letter-spacing: 1px;">SISTEMA ACTIVO</span>
             </div>
-            <button onclick="location.reload()" style="background:none; border:none; color:white; cursor:pointer; font-size: 11px;">CERRAR SESIÓN</button>
+            <button onclick="location.reload()" style="background:rgba(255,255,255,0.1); border:none; color:white; padding:5px 15px; border-radius:4px; cursor:pointer; font-size:10px;">CERRAR SESIÓN</button>
         </header>
 
         <div class="main-wrapper">
             <aside class="sidebar" id="sidebar">
                 <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">MI TERMINAL</p>
                 <ul>
-                    <li onclick="showDashboard()"><i class="ri-dashboard-line"></i> Inicio</li>
+                    <li onclick="showDashboard()"><i class="ri-dashboard-line"></i> Dashboard</li>
                     <li onclick="showPersonalSpace()"><i class="ri-sticky-note-line"></i> Mis Notas</li>
                 </ul>
+
                 <div id="admin-menu" style="display:none; margin-top: 25px;">
                     <p style="font-size:10px; opacity:0.5; margin-bottom:15px; font-weight: bold;">ADMINISTRACIÓN</p>
                     <ul>
@@ -106,6 +114,17 @@
                         <li onclick="showUserPanel()"><i class="ri-team-line"></i> Personal</li>
                         <li onclick="showLogs()"><i class="ri-terminal-window-line"></i> Logs de Sistema</li>
                     </ul>
+                </div>
+
+                <!-- REPRODUCTOR APPLE MUSIC INTEGRADO -->
+                <div style="margin-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                    <p style="font-size:10px; opacity:0.5; margin-bottom:12px; font-weight: bold;">SISTEMA DE AUDIO</p>
+                    <iframe allow="autoplay *; encrypted-media *; fullscreen *; clipboard-write" 
+                            frameborder="0" height="175" 
+                            style="width:100%; max-width:660px; overflow:hidden; border-radius:10px;" 
+                            sandbox="allow-forms allow-popups allow-same-origin allow-scripts allow-storage-access-by-user-activation allow-top-navigation-by-user-activation" 
+                            src="https://embed.music.apple.com/es/song/bad/559334751">
+                    </iframe>
                 </div>
             </aside>
 
@@ -116,7 +135,7 @@
     </div>
 
     <script>
-        // --- BASE DE DATOS LOCAL ---
+        // --- BASE DE DATOS ---
         let USERS = JSON.parse(localStorage.getItem('nexus_users')) || [
             { name: "ADMIN_COMMAND", range: "Overseer", role: "ADMIN", pass: "admin_nexus" }
         ];
@@ -134,13 +153,12 @@
         }
 
         function addLog(action) {
-            const now = new Date();
-            const timeStr = now.toLocaleDateString() + " " + now.toLocaleTimeString();
-            LOGS.unshift({ user: currentUser ? currentUser.name : "Sistema", action: action, date: timeStr });
+            const timeStr = new Date().toLocaleString();
+            LOGS.unshift({ user: currentUser ? currentUser.name : "Invitado", action: action, date: timeStr });
             saveDB();
         }
 
-        // --- SESIÓN ---
+        // --- LÓGICA DE ACCESO ---
         function iniciarSesion() {
             const nombre = document.getElementById("login-nombre").value;
             const pass = document.getElementById("login-pass").value;
@@ -148,11 +166,11 @@
 
             if (match) {
                 currentUser = match;
-                addLog("Inicio de sesión exitoso");
+                addLog("Login detectado");
                 document.getElementById("bloque-login").style.display = "none";
                 animarEntrada();
             } else {
-                alert("Acceso denegado.");
+                alert("Acceso denegado. Verifique nombre y contraseña.");
             }
         }
 
@@ -160,15 +178,13 @@
             const nombre = document.getElementById("login-nombre").value;
             const rango = document.getElementById("login-rango").value;
             const pass = document.getElementById("login-pass").value;
-            if(!nombre || !pass) return alert("Rellene nombre y clave.");
-            
+            if(!nombre || !pass) return alert("Complete los campos.");
+
             REQUESTS.push({ name: nombre, range: rango || "Recruit", pass: pass });
-            saveDB();
-            // Log sin usuario activo
             const time = new Date().toLocaleString();
-            LOGS.unshift({ user: nombre, action: "Solicitud de acceso enviada", date: time });
+            LOGS.unshift({ user: nombre, action: "Nueva solicitud de acceso", date: time });
             saveDB();
-            alert("Solicitud enviada.");
+            alert("Solicitud enviada al Administrador.");
         }
 
         function animarEntrada() {
@@ -182,54 +198,52 @@
                 setTimeout(() => {
                     document.getElementById("pantalla-bienvenida").style.display = "none";
                     document.getElementById("contenido-real").style.display = "flex";
-                    document.getElementById("topbar-user").innerText = `OPERATIVO: ${currentUser.name}`;
+                    document.getElementById("topbar-user").innerText = `NODO ACTIVO: ${currentUser.name}`;
                     if(currentUser.role === 'ADMIN') document.getElementById("admin-menu").style.display = "block";
                     showDashboard();
                 }, 2500);
             }, 3500);
         }
 
-        // --- VISTAS ---
+        // --- VISTAS DINÁMICAS ---
         function showDashboard() {
             document.getElementById("main-view").innerHTML = `
-                <h1 style="color:var(--verde-militar)">Panel de Control</h1>
-                <p>Bienvenido de nuevo, ${currentUser.name}. Los sistemas están operativos.</p>
-                <div style="margin-top:20px; padding:20px; background:white; border-radius:12px;">
-                    <h3>Última actividad en el sistema:</h3>
-                    <p style="font-size:12px; color:#666; margin-top:5px;">${LOGS[0] ? LOGS[0].action + " (" + LOGS[0].date + ")" : "Sin registros"}</p>
+                <h1 style="color:var(--verde-militar)">Centro de Control Nexus</h1>
+                <p>Bienvenido, ${currentUser.name}. El sistema se encuentra estable.</p>
+                <div style="margin-top:20px; padding:20px; background:white; border-radius:12px; border-left: 5px solid var(--verde-militar);">
+                    <h4 style="font-size:12px; opacity:0.6;">ÚLTIMO LOG:</h4>
+                    <p style="font-size:14px; font-family:monospace; margin-top:5px;">${LOGS[0] ? LOGS[0].action + " [" + LOGS[0].date + "]" : "Sin actividad registrada"}</p>
                 </div>
             `;
         }
 
         function showPersonalSpace() {
-            // Cargar notas específicas del usuario
             const userNotes = PERSONAL_DATA[currentUser.name] || "";
             document.getElementById("main-view").innerHTML = `
-                <h2><i class="ri-sticky-note-line"></i> Mis Notas Privadas</h2>
-                <p style="font-size:12px; color:#888; margin-bottom:15px;">Este contenido solo es visible para ti.</p>
-                <textarea class="personal-notes" id="note-area" placeholder="Escribe aquí tus órdenes o notas secretas...">${userNotes}</textarea>
-                <button onclick="saveNotes()" style="margin-top:10px; padding:10px 20px; background:var(--verde-militar); color:white; border:none; border-radius:8px; cursor:pointer;">Guardar Notas</button>
+                <h2><i class="ri-sticky-note-line"></i> Terminal de Notas de ${currentUser.name}</h2>
+                <p style="font-size:12px; color:#888; margin-bottom:15px;">Datos encriptados localmente.</p>
+                <textarea class="personal-notes" id="note-area" placeholder="Escriba aquí...">${userNotes}</textarea>
+                <button onclick="saveNotes()" style="margin-top:15px; padding:12px 25px; background:var(--verde-militar); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:bold;">GUARDAR EN MEMORIA</button>
             `;
         }
 
         function saveNotes() {
-            const text = document.getElementById("note-area").value;
-            PERSONAL_DATA[currentUser.name] = text;
+            PERSONAL_DATA[currentUser.name] = document.getElementById("note-area").value;
             saveDB();
-            addLog("Notas personales actualizadas");
-            alert("Notas guardadas en tu terminal privada.");
+            addLog("Actualizó notas personales");
+            alert("Notas guardadas correctamente.");
         }
 
         function showLogs() {
             let logHtml = LOGS.map(l => `
                 <div class="log-entry">
                     <span><span class="log-user">[${l.user}]</span> ${l.action}</span>
-                    <span class="log-date">${l.date}</span>
+                    <span style="color:#999;">${l.date}</span>
                 </div>
             `).join('');
             document.getElementById("main-view").innerHTML = `
-                <h2><i class="ri-terminal-window-line"></i> Registro de Logs</h2>
-                <div style="background:white; border-radius:12px; margin-top:20px; padding:10px;">${logHtml || "No hay logs registrados."}</div>
+                <h2><i class="ri-terminal-window-line"></i> Auditoría de Sistema</h2>
+                <div style="background:white; border-radius:12px; margin-top:20px; padding:10px; max-height:500px; overflow-y:auto;">${logHtml || "Vacío."}</div>
             `;
         }
 
@@ -237,15 +251,20 @@
             let rows = REQUESTS.map((req, i) => `
                 <tr>
                     <td><b>${req.name}</b></td><td>${req.range}</td>
-                    <td><button class="btn-promote" style="padding:5px;cursor:pointer" onclick="acceptReq(${i})">ACEPTAR</button></td>
+                    <td><button style="padding:6px 12px; background:#4caf50; color:white; border:none; border-radius:4px; cursor:pointer;" onclick="acceptReq(${i})">ACEPTAR</button></td>
                 </tr>`).join('');
-            document.getElementById("main-view").innerHTML = `<h2>Solicitudes</h2><table class="user-table"><thead><tr><th>Nombre</th><th>Rango</th><th>Acción</th></tr></thead><tbody>${rows}</tbody></table>`;
+            document.getElementById("main-view").innerHTML = `
+                <h2>Solicitudes de Ingreso</h2>
+                <table class="user-table">
+                    <thead><tr><th>Nombre</th><th>Rango</th><th>Acción</th></tr></thead>
+                    <tbody>${rows || '<tr><td colspan="3" style="text-align:center; padding:20px;">No hay solicitudes</td></tr>'}</tbody>
+                </table>`;
         }
 
         function acceptReq(i) {
             const req = REQUESTS[i];
             USERS.push({ ...req, role: 'USER' });
-            addLog(`Aceptó solicitud de acceso de: ${req.name}`);
+            addLog(`Admin aceptó a ${req.name}`);
             REQUESTS.splice(i, 1);
             saveDB();
             showRequestPanel();
@@ -253,7 +272,12 @@
 
         function showUserPanel() {
             let rows = USERS.map(u => `<tr><td>${u.name}</td><td>${u.range}</td><td>${u.role}</td></tr>`).join('');
-            document.getElementById("main-view").innerHTML = `<h2>Personal</h2><table class="user-table"><thead><tr><th>Nombre</th><th>Rango</th><th>Rol</th></tr></thead><tbody>${rows}</tbody></table>`;
+            document.getElementById("main-view").innerHTML = `
+                <h2>Personal Autorizado</h2>
+                <table class="user-table">
+                    <thead><tr><th>Nombre</th><th>Rango</th><th>Rol</th></tr></thead>
+                    <tbody>${rows}</tbody>
+                </table>`;
         }
 
         function toggleSidebar() {
